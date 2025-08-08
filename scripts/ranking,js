@@ -1,0 +1,14 @@
+export class Ranking {
+  constructor() {
+    this.records = [];
+  }
+
+  addRecord(playerName, time, drifts, draftingTime) {
+    this.records.push({ playerName, time, drifts, draftingTime });
+    this.records.sort((a, b) => a.time - b.time);
+  }
+
+  getTop5() {
+    return this.records.slice(0, 5);
+  }
+}
