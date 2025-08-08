@@ -102,3 +102,78 @@ export class Car {
     ctx.restore();
   }
 }
+// cars.js
+import { addTireMark, checkTireMarks, cleanupOldTireMarks } from './tireMarks.js';
+import { applySlipstreamEffect } from './slipstream.js';
+
+export class Car {
+  constructor(x, y, color, model) {
+    this.position = { x, y };
+    this.speed = 0;
+    this.maxSpeed = 5;
+    this.color = color;
+    this.model = model;
+    this.direction = 0;
+    this.turnSpeed = 0.05;
+    this.turningInertia = 0;
+    this.canvasWidth = 800;
+    this.canvasHeight = 600;
+  }
+
+  accelerate() {
+    this.speed = Math.min(this.speed + 0.1, this.maxSpeed);
+  }
+
+  decelerate() {
+    this.speed = Math.max(this.speed - 0.1, 0);
+  }
+
+  turnLeft() {
+    this.direction -= this.turnSpeed;
+    this.turningInertia = -0.1;
+  }
+
+  turnRight() {
+    this.direction += this.turnSpeed;
+    this.turningInertia = 0.1;
+  }
+
+  updatePosition(cars) {
+    this.direction += this.turningInertia;
+    this.turningInertia *= 0.9;
+
+    this.position.x += Math.cos(this.direction) * this.speed;
+    this.position.y += Math.sin(this.direction) * this.speed;
+
+    // Colisión básica con los bordes del canvas
+    if (this.position.x < 0 || this.position.x > this.canvasWidth ||
+        this.position.y < 0 || this.position.y > this.canvasHeight) {
+      this.speed = 0;
+      this.position.x = Math.max(0, Math.min(this.canvasWidth, this.position.x));
+      this.position.y = Math.max(0, Math.min(this.canvasHeight, this.position.y));
+    }
+
+    // Añadir una marca de neumático
+    addTireMark(this.position.x, this.position.y);
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(this.direction);
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-16, -8, 32, 16);
+    ctx.restore();
+  }
+}
+
+// Función para actualizar todos los coches
+export function updateCars(cars, ctx) {
+  cars.forEach(car => {
+    car.updatePosition(cars);
+    checkTireMarks(car);
+    car.draw(ctx);
+  });
+  applySlipstreamEffect(cars);
+  cleanupOldTireMarks();
+}
