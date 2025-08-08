@@ -118,3 +118,11 @@ button:focus {
         }
     }
 }
+.podium {
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 2s ease-in;
+}
+.place-1 { font-size: 2em; color: gold; }
+.place-2 { font-size: 1.5em; color: silver; }
+.place-3 { font-size: 1.2em; color: bronze; }
