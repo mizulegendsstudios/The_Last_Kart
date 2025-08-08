@@ -1,65 +1,120 @@
 /*
-    Copyright (C) 2023 Moises Núñez
-    Este archivo es parte de The Last Kart.
-    The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
-*/
+ * styles.css - Estilos básicos para The Last Kart
+ * Copyright (C) 2023 Moises Núñez
+ * Este archivo es parte de The Last Kart.
+ * The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
+ */
 
-body {
+/* Reset básico */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #222;
-    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.screen {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+html, body {
     height: 100%;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #222;
 }
 
-.screen.active {
-    display: flex;
-    opacity: 1;
+/* Base styles que complementan los estilos inline del HTML */
+body {
+    position: relative;
 }
 
+/* Asegurar que las transiciones funcionen suavemente */
+.screen {
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Estilos adicionales para mejorar la experiencia */
 button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    font-family: inherit;
 }
 
-button:hover {
-    background-color: #45a049;
+button:focus {
+    outline: 2px solid #4CAF50;
+    outline-offset: 2px;
 }
 
-.car-option {
-    width: 32px;
-    height: 32px;
-    margin: 10px;
-    border-radius: 5px;
-    transition: transform 0.3s, background-color 0.3s;
+/* Estilos para elementos de información del juego */
+.game-info > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-.car-option:hover {
-    transform: scale(1.5);
+/* Responsive adicional */
+@media (max-width: 600px) {
+    .game-info {
+        font-size: 0.9rem;
+    }
 }
 
-.car-option[data-color="red"] { background-color: red; }
-.car-option[data-color="blue"] { background-color: blue; }
-.car-option[data-color="green"] { background-color: green; }
-.car-option[data-color="yellow"] { background-color: yellow; }
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-header {
+        padding: 0.5rem;
+    }
+    
+    .game-header h2 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .game-controls .btn {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .game-main {
+        padding: 0.5rem;
+    }
+    
+    #gameCanvas {
+        max-height: 75vh;
+    }
+    
+    .game-info {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Animaciones adicionales */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Clases utilitarias */
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-out;
+}
+
+/* Accesibilidad mejorada */
+@media (prefers-reduced-motion: reduce) {
+    .screen,
+    .btn,
+    .car-option {
+        transition: none !important;
+    }
+    
+    @keyframes glow {
+        from, to { 
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); 
+        }
+    }
+}
