@@ -1,0 +1,21 @@
+Copyright (C) 2023 Moises Núñez
+
+The Last Kart
+
+Este programa es software libre: puedes redistribuirlo y/o modificarlo
+bajo los términos de la GNU Affero General Public License como se publica
+por la Free Software Foundation, versión 3 de la Licencia.
+
+Este programa se distribuye con la esperanza de que sea útil,
+pero SIN NINGUNA GARANTÍA; sin incluso la garantía implícita de
+COMERCIABILIDAD o IDONEIDAD PARA UN PROPÓSITO PARTICULAR. Consulta la
+GNU Affero General Public License para más detalles.
+
+Deberías haber recibido una copia de la GNU Affero General Public License
+junto con este programa. Si no, consulta <https://www.gnu.org/licenses/>.
+
+/*
+ * Copyright (C) 2023 Moises Núñez
+ * Este archivo es parte de The Last Kart.
+ * The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
+ */
