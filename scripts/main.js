@@ -455,4 +455,32 @@ class GameEngine {
     handleKeyDown(e) {
         switch(e.code) {
             case 'Escape':
-                if (this.gameState === '
+                if (this.gameState === 'game') {
+                    this.togglePause();
+                }
+                break;
+            case 'KeyM':
+                if (this.gameState === 'game') {
+                    this.showMenuScreen();
+                }
+                break;
+            case 'KeyR':
+                if (this.gameState === 'game') {
+                    this.resetGame();
+                }
+                break;
+        }
+    }
+    
+    handleResize() {
+        // Handle responsive canvas if needed
+        // Tu CSS ya maneja el aspecto visual
+    }
+}
+
+// Initialize game when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.gameEngine = new GameEngine();
+});
+
+export default GameEngine;
