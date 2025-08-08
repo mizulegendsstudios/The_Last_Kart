@@ -1,3 +1,9 @@
+/*
+    Copyright (C) 2023 Moises Núñez
+    Este archivo es parte de The Last Kart.
+    The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
+*/
+
 import { showMenu } from './menu.js';
 import { showCarSelection } from './carSelection.js';
 import { fadeIn, fadeOut } from './transitions.js';
