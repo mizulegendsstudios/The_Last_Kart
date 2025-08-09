@@ -162,8 +162,9 @@ function roundRect(ctx, x, y, w, h, r, fill, stroke){
 const controlsP1 = {up: 'w', down: 's', left: 'a', right: 'd', brake: ' '};
 const controlsP2 = {up: 'arrowup', down: 'arrowdown', left: 'arrowleft', right: 'arrowright', brake: null};
 
-const player1 = new Car((200 + W-200)/2, 120 - 40, Math.PI/2, '#ff4444', controlsP1);
+const player1 = new Car((200 + W-200)/2 - 40, 120 - 40, Math.PI/2, '#ff4444', controlsP1);
 const player2 = new Car((200 + W-200)/2 + 40, 120 - 40, Math.PI/2, '#4488ff', controlsP2);
+
 
 function aiController(car){
   let targetIndex = car.visited.findIndex(v => !v);
