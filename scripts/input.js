@@ -1,4 +1,4 @@
-    <!--
+/*<!--
 
         Copyright (C) 2025 Moises Núñez
 
@@ -6,7 +6,7 @@
 
         The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
 
-    -->
+    -->*/
 // input.js
 
 export const keys = {};
