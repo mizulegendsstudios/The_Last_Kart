@@ -4,10 +4,10 @@
  * The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
  */
 
-import { showMenu } from './menu.js';
-import { showCarSelection } from './carSelection.js';
-import { fadeIn, fadeOut } from './transitions.js';
-import { Car, updateCars } from './cars.js';
+import { showMenu } from 'https://mizulegendsstudios.github.io/The_Last_Kart/scripts/menu.js';
+import { showCarSelection } from 'https://mizulegendsstudios.github.io/The_Last_Kart/scripts//carSelection.js';
+import { fadeIn, fadeOut } from 'https://mizulegendsstudios.github.io/The_Last_Kart/scripts//transitions.js';
+import { Car, updateCars } from 'https://mizulegendsstudios.github.io/The_Last_Kart/scripts//cars.js';
 
 class GameEngine {
     constructor() {
