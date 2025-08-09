@@ -5,6 +5,7 @@
  */
 
 // main.js — v0.4.1
+import { keys, getKeyboardInput, getGamepadInput } from './input.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -23,18 +24,6 @@ const totalChecksEl = document.getElementById('totalChecks');
 
 let targetLaps = 3;
 totalLapsEl.textContent = targetLaps;
-
-const keys = {};
-window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
-window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
-
-let gamepadIndex = null;
-window.addEventListener("gamepadconnected", (e) => {
-  gamepadIndex = e.gamepad.index;
-});
-window.addEventListener("gamepaddisconnected", (e) => {
-  if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
-});
 
 function lineIntersect(ax,ay,bx,by,cx,cy,dx,dy){
   const u = ((cx-ax)*(ay-by)-(cy-ay)*(ax-bx))/((dx-cx)*(ay-by)-(dy-cy)*(ax-bx));
@@ -221,22 +210,14 @@ function getGamepadInput(){
 }
 
 function update(dt){
+  const kbInput = getKeyboardInput();
   const gpInput = getGamepadInput();
-  const inputP1 = gpInput || {
-    up: keys['w'] || false,
-    down: keys['s'] || false,
-    left: keys['a'] || false,
-    right: keys['d'] || false,
-    brake: keys[' '] || false
-  };
 
-  const inputP2 = {
-    up: keys['arrowup'] || false,
-    down: keys['arrowdown'] || false,
-    left: keys['arrowleft'] || false,
-    right: keys['arrowright'] || false,
-    brake: false
-  };
+  // Player 1 usa gamepad si hay input, sino teclado WASD
+  const inputP1 = (gpInput && (gpInput.up || gpInput.down || gpInput.left || gpInput.right)) ? gpInput : kbInput.player1;
+
+  // Player 2 usa teclado flechas
+  const inputP2 = kbInput.player2;
 
   player1.update(dt, inputP1);
   player2.update(dt, inputP2);
