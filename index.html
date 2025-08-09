@@ -3,19 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>The Last Kart — v0.3.0</title>
+<title>The Last Kart — v0.4.0</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="ui">
     <div id="title">The Last Kart</div>
     <div id="hud">
-      <div>Laps: <span id="lap">0</span>/<span id="totalLaps">3</span></div>
-      <div>Speed: <span id="speed">0</span> km/h</div>
-      <div>Check: <span id="check">0</span>/<span id="totalChecks">0</span></div>
+      <div>Laps P1: <span id="lapP1">0</span>/<span id="totalLaps">3</span></div>
+      <div>Laps P2: <span id="lapP2">0</span>/<span id="totalLaps">3</span></div>
+      <div>Speed P1: <span id="speedP1">0</span> km/h</div>
+      <div>Speed P2: <span id="speedP2">0</span> km/h</div>
+      <div>Check P1: <span id="checkP1">0</span>/<span id="totalChecks">0</span></div>
+      <div>Check P2: <span id="checkP2">0</span>/<span id="totalChecks">0</span></div>
       <div>FPS: <span id="fps">0</span></div>
     </div>
-    <div id="controls">WASD / Arrows — R reiniciar</div>
+    <div id="controls">
+      P1: WASD — P2: Arrows — R reiniciar
+      <br>
+      Joystick (si disponible) controlará P1
+    </div>
   </div>
 
   <main>
