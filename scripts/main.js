@@ -5,7 +5,7 @@
  */
 
 // main.js — v0.4.1
-import { keys, getKeyboardInput, getGamepadInput } from './input.js';
+import { keys, getKeyboardInput, getGamepadInput } from 'https://mizulegendsstudios.github.io/The_Last_Kart/scripts/input.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
