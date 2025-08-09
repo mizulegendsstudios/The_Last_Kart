@@ -1,0 +1,48 @@
+/*
+ * Copyright (C) 2023 Moisés Núñez
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * 
+ * Proyecto: The Last Kart
+ * Tipo: Web App Game (Carreras de carros)
+ * Vista de cámara: Top-Down (Cámara aérea estática)
+ * 
+ * Licencia: GNU Affero General Public License v3.0  
+ * https://www.gnu.org/licenses/agpl-3.0.html
+ * 
+ * Este archivo forma parte del código fuente de The Last Kart. 
+ * Todos los archivos están bajo licencia AGPL-3.0, lo que requiere:
+ * - Distribuir el código fuente completo al modificar o redistribuir.
+ * - Incluir este aviso de derechos de autor y licencia en todas las copias.
+ * 
+ * Uso de IA en el proyecto:
+ * 
+ * 1. Narrativa y guion:
+ *    - Generado con: ChatGPT-4 (prompts de diseño de historias y eventos del juego).
+ *    - Ejemplo de prompt: "Crea un guion de carreras futuristas con personajes cómicos".
+ * 
+ * 2. Estructura técnica (HTML, CSS, JS):
+ *    - Generado con: GitHub Copilot (sugerencias de código base, arquitectura del juego).
+ *    - Herramientas adicionales: 
+ *      - HTML: Plantillas generadas con AI para estructurar el canvas del juego.
+ *      - CSS: Estilos base creados con AI para animaciones de carreras.
+ *      - JS: Lógica de movimiento generada con AI (ej: movimiento de vehículos).
+ * 
+ * 3. Assets visuales:
+ *    - Generados con: DALL-E 3 (diseño de circuitos y vehículos).
+ *    - Ejemplo de prompt: "Circuito de carreras cyberpunk con luces neon y obstáculos".
+ * 
+ * 4. Sonidos y efectos:
+ *    - Generados con: AI de síntesis de sonido (ej: herramientas como Synthesizer V).
+ * 
+ * Créditos:
+ * - Prompts principales: Diseñados por Moisés Núñez.
+ * - IA utilizada: ChatGPT-4, GitHub Copilot, DALL-E 3, Synthesizer V.
+ * 
+ * Nota: Los assets generados por IA están sujetos a las licencias de sus respectivas plataformas.
+ * Consulta los términos de uso de cada herramienta de IA para atribuciones adicionales.
+ * 
+ * Para colaborar o modificar este proyecto:
+ * 1. Asegúrate de incluir este archivo CORE en todas las distribuciones.
+ * 2. Proporciona el código fuente completo.
+ * 3. Mantén los créditos a Moisés Núñez y las herramientas de IA utilizadas.
+ */
