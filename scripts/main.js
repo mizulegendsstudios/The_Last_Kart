@@ -196,19 +196,6 @@ function aiController(car){
 let aiCar = new Car(W-100, H-100, Math.PI/2, '#44ff44');
 aiCar.visited = new Array(checkpoints.length).fill(false);
 
-function getGamepadInput(){
-  if(gamepadIndex === null) return null;
-  const gp = navigator.getGamepads()[gamepadIndex];
-  if(!gp) return null;
-  const threshold = 0.2;
-  let up = gp.axes[1] < -threshold;
-  let down = gp.axes[1] > threshold;
-  let left = gp.axes[0] < -threshold;
-  let right = gp.axes[0] > threshold;
-  let brake = gp.buttons[0].pressed;
-  return {up, down, left, right, brake};
-}
-
 function update(dt){
   const kbInput = getKeyboardInput();
   const gpInput = getGamepadInput();
