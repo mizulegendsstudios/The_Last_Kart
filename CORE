@@ -6,6 +6,9 @@
  * Tipo: Web App Game (Carreras de carros)
  * Vista de cámara: Top-Down (Cámara aérea estática)
  * 
+ * Sistema de versiones: Semantic Versioning 2.0.0
+ *https://semver.org/
+ * 
  * Licencia: GNU Affero General Public License v3.0  
  * https://www.gnu.org/licenses/agpl-3.0.html
  * 
