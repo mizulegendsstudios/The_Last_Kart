@@ -298,12 +298,20 @@ function loop(ts=0){
   checkP1El.textContent = player1.visited.filter(v => v).length;
   checkP2El.textContent = player2.visited.filter(v => v).length;
 
+  // FPS  
+let fpsTimer = 0;
+function loop(ts = 0) {
+const dt = (ts - lastTime) / 16.666;
+  lastTime = ts;
+  fpsTimer += ts - lastTime;
   frames++;
-  if(ts % 1000 < 16.666){
+
+  if (fpsTimer >= 1000) {
     fps = frames;
     frames = 0;
+    fpsTimer = 0;
   }
-  fpsEl.textContent = fps;
+}
 
   requestAnimationFrame(loop);
 }
