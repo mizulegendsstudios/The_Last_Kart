@@ -4,18 +4,22 @@
  * The Last Kart está licenciado bajo la GNU Affero General Public License v3.0.
  */
 
-// main.js — v0.3.0
+// main.js — v0.4.0
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const W = canvas.width, H = canvas.height;
 
-// HUD refs
-const lapEl = document.getElementById('lap');
+// HUD refs for P1 and P2
+const lapP1El = document.getElementById('lapP1');
+const lapP2El = document.getElementById('lapP2');
 const totalLapsEl = document.getElementById('totalLaps');
-const speedEl = document.getElementById('speed');
+const speedP1El = document.getElementById('speedP1');
+const speedP2El = document.getElementById('speedP2');
 const fpsEl = document.getElementById('fps');
-const checkEl = document.getElementById('check');
+const checkP1El = document.getElementById('checkP1');
+const checkP2El = document.getElementById('checkP2');
 const totalChecksEl = document.getElementById('totalChecks');
 
 let targetLaps = 3;
@@ -26,6 +30,15 @@ const keys = {};
 window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
+// Gamepad state for joystick
+let gamepadIndex = null;
+window.addEventListener("gamepadconnected", (e) => {
+  gamepadIndex = e.gamepad.index;
+});
+window.addEventListener("gamepaddisconnected", (e) => {
+  if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
+});
+
 // Utility: line intersection
 function lineIntersect(ax,ay,bx,by,cx,cy,dx,dy){
   const u = ((cx-ax)*(ay-by)-(cy-ay)*(ax-bx))/((dx-cx)*(ay-by)-(dy-cy)*(ax-bx));
@@ -33,7 +46,7 @@ function lineIntersect(ax,ay,bx,by,cx,cy,dx,dy){
   return (t>=0 && t<=1 && u>=0 && u<=1);
 }
 
-// Track: outer polygon and inner polygon (donut track)
+// Track polygons and checkpoints (same as before)
 const outer = [
   {x:80,y:80},{x:W-80,y:80},{x:W-80,y:H-160},{x:W-240,y:H-160},
   {x:W-240,y:H-80},{x:240,y:H-80},{x:240,y:H-160},{x:80,y:H-160}
@@ -42,145 +55,133 @@ const inner = [
   {x:240,y:200},{x:W-240,y:200},{x:W-240,y:H-260},{x:240,y:H-260}
 ];
 
-// Checkpoints: ordered segments around track to prevent shortcutting
-// We'll place checkpoints at midpoints of track corridors (simple approximation)
 const checkpoints = [
-  // top mid (left->right)
   {ax:200,ay:120,bx:W-200,by:120},
-  // right curve (top->down)
   {ax:W-120,ay:200,bx:W-120,by:H-220},
-  // bottom mid (right->left)
   {ax:W-200,ay:H-120,bx:200,by:H-120},
-  // left curve (down->top)
   {ax:120,ay:H-220,bx:120,by:200}
 ];
 totalChecksEl.textContent = checkpoints.length;
 
-// Finish line is first checkpoint but we'll treat finish as a distinct small segment
 const finish = {ax: (200 + W-200)/2 - 20, ay: 120, bx: (200 + W-200)/2 + 20, by: 120};
 
-// Car
-const car = {
-  x: (200 + W-200)/2, // start center top area just past finish
-  y: 120 - 40,
-  angle: Math.PI/2, // pointing down
-  vel: 0,
-  maxSpeed: 6.5,
-  accel: 0.18,
-  brake: 0.28,
-  turnSpeed: 0.04,
-  width: 28,
-  height: 44,
-  color: '#ff4444'
-};
-
-// Lap & checkpoint state
-let currentLap = 0;
-let visited = new Array(checkpoints.length).fill(false);
-lapEl.textContent = currentLap;
-checkEl.textContent = visited.filter(v=>v).length;
-
-// Physics & timing
-let last = performance.now();
-let fpsCounter = {frames:0,lastTime:performance.now(),value:0};
-
-// Helpers to draw polygons
-function drawPoly(pts, fillStyle=null, strokeStyle='#444', lineWidth=2){
-  ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
-  ctx.closePath();
-  if(fillStyle){ ctx.fillStyle = fillStyle; ctx.fill(); }
-  ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth; ctx.stroke();
-}
-
-// Draw track (donut)
-function drawTrack(){
-  // background
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0,0,W,H);
-
-  // outer wall
-  drawPoly(outer, '#2b2b2b', '#5a5a5a', 4);
-
-  // inner hole (cut)
-  ctx.save();
-  // draw full outer fill then punch hole using globalCompositeOperation
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.beginPath();
-  ctx.moveTo(inner[0].x, inner[0].y);
-  for(let i=1;i<inner.length;i++) ctx.lineTo(inner[i].x, inner[i].y);
-  ctx.closePath();
-  ctx.fillStyle = '#000';
-  ctx.fill();
-  ctx.restore();
-
-  // Track center line (dashed)
-  ctx.setLineDash([20,18]);
-  ctx.strokeStyle = '#bbbb44';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  // path through middle of track rectangle-ish loop
-  ctx.moveTo( (200), 120 );
-  ctx.lineTo( W-200, 120 );
-  ctx.lineTo( W-120, 200 );
-  ctx.lineTo( W-120, H-200 );
-  ctx.lineTo( W-200, H-120 );
-  ctx.lineTo( 200, H-120 );
-  ctx.lineTo( 120, H-200 );
-  ctx.lineTo( 120, 200 );
-  ctx.closePath();
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // draw checkpoints
-  for(let i=0;i<checkpoints.length;i++){
-    const c = checkpoints[i];
-    ctx.strokeStyle = visited[i] ? '#4CAF50' : '#cc3333';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(c.ax, c.ay);
-    ctx.lineTo(c.bx, c.by);
-    ctx.stroke();
+// Car class for P1, P2, and AI
+class Car {
+  constructor(x, y, angle, color, controls=null){
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+    this.vel = 0;
+    this.width = 28;
+    this.height = 44;
+    this.color = color;
+    this.maxSpeed = 6.5;
+    this.accel = 0.18;
+    this.brake = 0.28;
+    this.turnSpeed = 0.04;
+    this.controls = controls; // object with keys: up, down, left, right, brake
+    this.visited = new Array(checkpoints.length).fill(false);
+    this.currentLap = 0;
+    this.prevX = undefined;
+    this.prevY = undefined;
   }
 
-  // finish line
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(finish.ax, finish.ay);
-  ctx.lineTo(finish.bx, finish.by);
-  ctx.stroke();
+  update(dt, inputState){
+    // InputState: keys for human, or AI function returns control booleans
+    let up=false, down=false, left=false, right=false, brake=false;
 
-  // small decorative border
-  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(2,2,W-4,H-4);
+    if(this.controls){
+      if(inputState){
+        up = inputState[this.controls.up];
+        down = inputState[this.controls.down];
+        left = inputState[this.controls.left];
+        right = inputState[this.controls.right];
+        brake = inputState[this.controls.brake] || false;
+      }
+    } else if(typeof inputState === 'function'){
+      // AI control function returns object {up,down,left,right,brake}
+      const aiInput = inputState(this);
+      up = aiInput.up;
+      down = aiInput.down;
+      left = aiInput.left;
+      right = aiInput.right;
+      brake = aiInput.brake || false;
+    }
+
+    // Movement physics
+    if(up) this.vel += this.accel;
+    if(down) this.vel -= this.brake;
+    if(!up && !down){
+      this.vel *= 0.985;
+    }
+    if(brake) this.vel *= 0.92;
+
+    this.vel = Math.max(-2.5, Math.min(this.vel, this.maxSpeed));
+
+    const turn = (left ? -1 : 0) + (right ? 1 : 0);
+    const sign = this.vel >= 0 ? 1 : -1;
+    this.angle += turn * this.turnSpeed * (1 + Math.abs(this.vel)/8) * sign;
+
+    this.x += Math.cos(this.angle - Math.PI/2) * this.vel;
+    this.y += Math.sin(this.angle - Math.PI/2) * this.vel;
+
+    // Keep inside bounds simple collision
+    if(this.x < 60) this.x = 60;
+    if(this.x > W-60) this.x = W-60;
+    if(this.y < 60) this.y = 60;
+    if(this.y > H-60) this.y = H-60;
+
+    // Checkpoints detection
+    if(this.prevX !== undefined){
+      for(let i=0; i<checkpoints.length; i++){
+        if(!this.visited[i]){
+          const c = checkpoints[i];
+          if(lineIntersect(this.prevX,this.prevY,this.x,this.y,c.ax,c.ay,c.bx,c.by)){
+            this.visited[i] = true;
+          }
+        }
+      }
+      // Finish crossing
+      if(lineIntersect(this.prevX,this.prevY,this.x,this.y,finish.ax,finish.ay,finish.bx,finish.by)){
+        if(this.visited.every(v=>v)){
+          this.currentLap++;
+          this.visited = new Array(checkpoints.length).fill(false);
+        }
+      }
+    }
+    this.prevX = this.x;
+    this.prevY = this.y;
+  }
+
+  draw(){
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+
+    // shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(-this.width/2+4, -this.height/2+10, this.width, 12);
+
+    // body
+    ctx.fillStyle = this.color;
+    roundRect(ctx, -this.width/2, -this.height/2, this.width, this.height, 4, true, false);
+
+    // windshield
+    ctx.fillStyle = '#222';
+    roundRect(ctx, -this.width/4, -this.height/2+4, this.width/2, this.height/3, 2, true, false);
+
+    // wheels
+    ctx.fillStyle = '#111';
+    ctx.fillRect(-this.width/2-4, -this.height/2+8, 6, 12);
+    ctx.fillRect(this.width/2-2, -this.height/2+8, 6, 12);
+    ctx.fillRect(-this.width/2-4, this.height/2-20, 6, 12);
+    ctx.fillRect(this.width/2-2, this.height/2-20, 6, 12);
+
+    ctx.restore();
+  }
 }
 
-// Draw simple pixel-like rally car (shape)
-function drawCar(){
-  ctx.save();
-  ctx.translate(car.x, car.y);
-  ctx.rotate(car.angle);
-  // shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(-car.width/2+4, -car.height/2+10, car.width, 12);
-  // body
-  ctx.fillStyle = car.color;
-  roundRect(ctx, -car.width/2, -car.height/2, car.width, car.height, 4, true, false);
-  // windshield
-  ctx.fillStyle = '#222';
-  roundRect(ctx, -car.width/4, -car.height/2+4, car.width/2, car.height/3, 2, true, false);
-  // wheels (simple)
-  ctx.fillStyle = '#111';
-  ctx.fillRect(-car.width/2-4, -car.height/2+8, 6, 12); // front-left
-  ctx.fillRect(car.width/2-2, -car.height/2+8, 6, 12); // front-right
-  ctx.fillRect(-car.width/2-4, car.height/2-20, 6, 12); // rear-left
-  ctx.fillRect(car.width/2-2, car.height/2-20, 6, 12); // rear-right
-  ctx.restore();
-}
-
+// Round rect helper (same as before)
 function roundRect(ctx, x, y, w, h, r, fill, stroke){
   if (r === undefined) r = 5;
   ctx.beginPath();
@@ -194,125 +195,126 @@ function roundRect(ctx, x, y, w, h, r, fill, stroke){
   if(stroke) ctx.stroke();
 }
 
-// Movement, steering, update
+// Human controls mapping for P1 and P2
+const controlsP1 = {up: 'w', down: 's', left: 'a', right: 'd', brake: ' '};
+const controlsP2 = {up: 'arrowup', down: 'arrowdown', left: 'arrowleft', right: 'arrowright', brake: null};
+
+// Instantiate cars
+const player1 = new Car((200 + W-200)/2, 120 - 40, Math.PI/2, '#ff4444', controlsP1);
+const player2 = new Car((200 + W-200)/2 + 40, 120 - 40, Math.PI/2, '#4488ff', controlsP2);
+
+// Simple AI for CPU car: follows checkpoints in order
+function aiController(car){
+  // Target next checkpoint center
+  let targetIndex = car.visited.findIndex(v => !v);
+  if(targetIndex === -1) targetIndex = 0; // loop
+
+  const c = checkpoints[targetIndex];
+  const targetX = (c.ax + c.bx) / 2;
+  const targetY = (c.ay + c.by) / 2;
+
+  // Vector to target
+  const dx = targetX - car.x;
+  const dy = targetY - car.y;
+  const targetAngle = Math.atan2(dy, dx);
+
+  // Angle difference
+  let diff = targetAngle - (car.angle - Math.PI/2);
+  while(diff > Math.PI) diff -= 2*Math.PI;
+  while(diff < -Math.PI) diff += 2*Math.PI;
+
+  // Decide turn
+  const turnLeft = diff < 0;
+  const turnRight = diff > 0;
+
+  return {
+    up: true,
+    down: false,
+    left: turnLeft,
+    right: turnRight,
+    brake: false
+  };
+}
+
+// Gamepad input for player1 joystick
+function getGamepadInput(){
+  if(gamepadIndex === null) return null;
+  const gp = navigator.getGamepads()[gamepadIndex];
+  if(!gp) return null;
+
+  // Using left stick: axes[0] horizontal, axes[1] vertical
+  const threshold = 0.2;
+  let up = gp.axes[1] < -threshold;
+  let down = gp.axes[1] > threshold;
+  let left = gp.axes[0] < -threshold;
+  let right = gp.axes[0] > threshold;
+  // Button 0 for brake (A on Xbox)
+  let brake = gp.buttons[0].pressed;
+
+  return {up, down, left, right, brake};
+}
+
+// Update all cars
 function update(dt){
-  // controls: forward/back + strafe/turning style that gives 360° handling
-  const up = keys['w'] || keys['arrowup'];
-  const down = keys['s'] || keys['arrowdown'];
-  const left = keys['a'] || keys['arrowleft'];
-  const right = keys['d'] || keys['arrowright'];
-  const brake = keys[' ']; // space
+  // Player 1 input priority: joystick if available, else keyboard
+  const gpInput = getGamepadInput();
+  const inputP1 = gpInput || {
+    up: keys['w'] || false,
+    down: keys['s'] || false,
+    left: keys['a'] || false,
+    right: keys['d'] || false,
+    brake: keys[' '] || false
+  };
 
-  // acceleration/brake
-  if(up) car.vel += car.accel;
-  if(down) car.vel -= car.brake;
-  if(!up && !down){
-    // natural friction
-    car.vel *= 0.985;
-  }
-  if(brake) car.vel *= 0.92;
+  // Player 2 keyboard only
+  const inputP2 = {
+    up: keys['arrowup'] || false,
+    down: keys['arrowdown'] || false,
+    left: keys['arrowleft'] || false,
+    right: keys['arrowright'] || false,
+    brake: false
+  };
 
-  // clamp speed
-  car.vel = Math.max(-2.5, Math.min(car.vel, car.maxSpeed));
+  player1.update(dt, inputP1);
+  player2.update(dt, inputP2);
 
-  // turning scaled by speed magnitude (reversed when reversing)
-  const turn = (left ? -1 : 0) + (right ? 1 : 0);
-  const sign = car.vel >= 0 ? 1 : -1;
-  car.angle += turn * car.turnSpeed * (1 + Math.abs(car.vel)/8) * sign;
-
-  // integrate position
-  car.x += Math.cos(car.angle - Math.PI/2) * car.vel;
-  car.y += Math.sin(car.angle - Math.PI/2) * car.vel;
-
-  // keep inside canvas bounding rect — simple wall collision (push back)
-  if(car.x < 60) car.x = 60;
-  if(car.x > W-60) car.x = W-60;
-  if(car.y < 60) car.y = 60;
-  if(car.y > H-60) car.y = H-60;
-
-  // speed HUD (approx to km/h)
-  speedEl.textContent = Math.round(Math.abs(car.vel)*42);
-
-  // checkpoint detection — check segment intersection between previous pos and current pos
-  const prev = {x: car.prevX, y: car.prevY};
-  const now = {x: car.x, y: car.y};
-  if(prev.x !== undefined){
-    for(let i=0;i<checkpoints.length;i++){
-      if(!visited[i]){
-        const c = checkpoints[i];
-        if(lineIntersect(prev.x,prev.y,now.x,now.y,c.ax,c.ay,c.bx,c.by)){
-          visited[i] = true;
-          checkEl.textContent = visited.filter(v=>v).length;
-        }
-      }
-    }
-    // finish crossing: allow lap increment only if all checkpoints visited in order
-    // detect crossing finish segment (top mid)
-    if(lineIntersect(prev.x,prev.y,now.x,now.y,finish.ax,finish.ay,finish.bx,finish.by)){
-      // require all visited
-      const all = visited.every(v=>v);
-      if(all){
-        currentLap++;
-        lapEl.textContent = currentLap;
-        // reset visited for next lap
-        visited = new Array(checkpoints.length).fill(false);
-        checkEl.textContent = 0;
-      } else {
-        // false finish — ignore
-      }
-    }
-  }
-  car.prevX = car.x; car.prevY = car.y;
+  // AI car (optional, positioned bottom right)
+  aiCar.update(dt, aiController);
 }
 
-// Render loop
-function render(){
-  drawTrack();
-  drawCar();
-}
+// Draw track improvements (colors, gradients)
+function drawTrack(){
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0,0,W,H);
 
-// Main loop
-function loop(t){
-  const now = performance.now();
-  const dt = Math.min(32, now - last);
-  last = now;
+  // Outer wall gradient
+  let gradOuter = ctx.createLinearGradient(0,0,W,0);
+  gradOuter.addColorStop(0,'#2b2b2b');
+  gradOuter.addColorStop(1,'#555555');
+  drawPoly(outer, gradOuter, '#5a5a5a', 4);
 
-  update(dt/16);
-  render();
+  // Inner hole punch out
+  ctx.save();
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  ctx.moveTo(inner[0].x, inner[0].y);
+  for(let i=1;i<inner.length;i++) ctx.lineTo(inner[i].x, inner[i].y);
+  ctx.closePath();
+  ctx.fillStyle = '#000';
+  ctx.fill();
+  ctx.restore();
 
-  // FPS
-  fpsCounter.frames++;
-  if(now - fpsCounter.lastTime >= 500){
-    fpsCounter.value = Math.round((fpsCounter.frames*1000)/(now - fpsCounter.lastTime));
-    fpsCounter.frames = 0;
-    fpsCounter.lastTime = now;
-    fpsEl.textContent = fpsCounter.value;
-  }
-
-  requestAnimationFrame(loop);
-}
-
-// Reset function
-function reset(){
-  car.x = (200 + W-200)/2;
-  car.y = 120 - 40;
-  car.angle = Math.PI/2;
-  car.vel = 0;
-  currentLap = 0;
-  lapEl.textContent = currentLap;
-  visited = new Array(checkpoints.length).fill(false);
-  checkEl.textContent = 0;
-}
-
-// keyboard helper for reset R
-window.addEventListener('keydown', (e)=>{
-  if(e.key.toLowerCase() === 'r'){ reset(); }
-});
-
-// initial values
-lapEl.textContent = currentLap;
-checkEl.textContent = visited.filter(v=>v).length;
-totalChecksEl.textContent = checkpoints.length;
-
-// start
-requestAnimationFrame(loop);
+  // Track center line dashed
+  ctx.setLineDash([20,18]);
+  ctx.strokeStyle = '#bbbb44';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo( (200), 120 );
+  ctx.lineTo( W-200, 120 );
+  ctx.lineTo( W-120, 200 );
+  ctx.lineTo( W-120, H-200 );
+  ctx.lineTo( W-200, H-120 );
+  ctx.lineTo( 200, H-120 );
+  ctx.lineTo( 120, H-200 );
+  ctx.lineTo( 120, 200 );
+  ctx
