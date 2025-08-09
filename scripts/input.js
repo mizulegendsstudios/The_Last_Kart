@@ -12,10 +12,12 @@
 export const keys = {};
 
 window.addEventListener('keydown', e => {
+console.log('Tecla presionada:', e.key);
   keys[e.key.toLowerCase()] = true;
 });
 
 window.addEventListener('keyup', e => {
+  console.log('Tecla liberada:', e.key);
   keys[e.key.toLowerCase()] = false;
 });
 
