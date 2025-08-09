@@ -9,9 +9,87 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--muted);font-family:Inter,Arial,Helvetica,sans-serif}
-#ui{position:fixed;left:12px;top:12px;z-index:50;background:rgba(0,0,0,0.45);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
-#title{font-weight:700;color:var(--accent);margin-bottom:6px}
-#hud{display:flex;gap:12px;font-size:14px;align-items:center}
-#controls{position:fixed;right:12px;top:12px;background:rgba(0,0,0,0.45);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
-main{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:40px}
-canvas{background:#0a0a0a;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,0.7);max-width:calc(100vw - 80px);height:auto}
+
+#ui{
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: 50;
+  background: rgba(0,0,0,0.45);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  max-width: 280px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+#title{
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+#hud{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#hud > div{
+  flex: 1 1 45%;
+}
+
+#controls{
+  position: fixed;
+  right: 12px;
+  top: 12px;
+  background: rgba(0,0,0,0.45);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  max-width: 180px;
+  font-size: 13px;
+  text-align: center;
+  user-select: none;
+  opacity: 0.65;
+}
+
+main{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+canvas{
+  background: #0a0a0a;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+  max-width: calc(100vw - 80px);
+  height: auto;
+}
+
+/* Responsive UI for smartphones */
+@media (max-width: 600px) {
+  #ui {
+    max-width: 90vw;
+    font-size: 12px;
+    padding: 8px;
+  }
+  #hud > div {
+    flex: 1 1 100%;
+  }
+  #controls {
+    max-width: 90vw;
+    font-size: 11px;
+    right: 50%;
+    transform: translateX(50%);
+    top: auto;
+    bottom: 12px;
+  }
+}
