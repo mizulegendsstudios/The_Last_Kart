@@ -14,16 +14,19 @@ const W = canvas.width, H = canvas.height;
 
 const lapP1El = document.getElementById('lapP1');
 const lapP2El = document.getElementById('lapP2');
-const totalLapsEl = document.getElementById('totalLaps');
+const totalLapsP1El = document.getElementById('totalLapsP1');
+const totalLapsP2El = document.getElementById('totalLapsP2');
 const speedP1El = document.getElementById('speedP1');
 const speedP2El = document.getElementById('speedP2');
 const fpsEl = document.getElementById('fps');
 const checkP1El = document.getElementById('checkP1');
 const checkP2El = document.getElementById('checkP2');
-const totalChecksEl = document.getElementById('totalChecks');
+const totalChecksP1El = document.getElementById('totalChecksP1');
+const totalChecksP2El = document.getElementById('totalChecksP2');
 
 let targetLaps = 3;
-totalLapsEl.textContent = targetLaps;
+totalLapsP1El.textContent = targetLaps;
+totalLapsP2El.textContent = targetLaps;
 
 function lineIntersect(ax,ay,bx,by,cx,cy,dx,dy){
   const u = ((cx-ax)*(ay-by)-(cy-ay)*(ax-bx))/((dx-cx)*(ay-by)-(dy-cy)*(ax-bx));
@@ -45,7 +48,8 @@ const checkpoints = [
   {ax:W-200,ay:H-120,bx:200,by:H-120},
   {ax:120,ay:H-220,bx:120,by:200}
 ];
-totalChecksEl.textContent = checkpoints.length;
+totalChecksP1El.textContent = checkpoints.length;
+totalChecksP2El.textContent = checkpoints.length;
 
 const finish = {ax: (200 + W-200)/2 - 20, ay: 120, bx: (200 + W-200)/2 + 20, by: 120};
 

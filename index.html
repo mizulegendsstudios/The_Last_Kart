@@ -3,19 +3,32 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="The Last Kart - Juego de carreras multijugador en HTML5 Canvas. Compite con un amigo en emocionantes carreras de karts.">
+<meta name="keywords" content="juego, carreras, kart, multijugador, HTML5, canvas, racing game">
+<meta name="author" content="Mizu Legends Studios">
+<meta name="theme-color" content="#2196F3">
+<meta property="og:title" content="The Last Kart — v0.4.0">
+<meta property="og:description" content="Juego de carreras multijugador en HTML5 Canvas">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mizulegendsstudios.github.io/The_Last_Kart/">
+<meta property="og:image" content="https://mizulegendsstudios.github.io/The_Last_Kart/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Last Kart — v0.4.0">
+<meta name="twitter:description" content="Juego de carreras multijugador en HTML5 Canvas">
 <title>The Last Kart — v0.4.0</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
 <link rel="stylesheet" href="https://mizulegendsstudios.github.io/The_Last_Kart/styles.css">
 </head>
 <body>
   <div id="ui">
     <div id="title">The Last Kart</div>
     <div id="hud">
-      <div>Laps P1: <span id="lapP1">0</span>/<span id="totalLaps">3</span></div>
-      <div>Laps P2: <span id="lapP2">0</span>/<span id="totalLaps">3</span></div>
+      <div>Laps P1: <span id="lapP1">0</span>/<span id="totalLapsP1">3</span></div>
+      <div>Laps P2: <span id="lapP2">0</span>/<span id="totalLapsP2">3</span></div>
       <div>Speed P1: <span id="speedP1">0</span> km/h</div>
       <div>Speed P2: <span id="speedP2">0</span> km/h</div>
-      <div>Check P1: <span id="checkP1">0</span>/<span id="totalChecks">0</span></div>
-      <div>Check P2: <span id="checkP2">0</span>/<span id="totalChecks">0</span></div>
+      <div>Check P1: <span id="checkP1">0</span>/<span id="totalChecksP1">0</span></div>
+      <div>Check P2: <span id="checkP2">0</span>/<span id="totalChecksP2">0</span></div>
       <div>FPS: <span id="fps">0</span></div>
     </div>
     <div id="controls">
