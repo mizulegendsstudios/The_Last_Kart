@@ -1,4 +1,4 @@
-# The Last Kart 🏎️
+# Mizu Turbo 🏎️
 
 ![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
@@ -6,7 +6,7 @@
 
 **Juego de carreras multijugador en HTML5 Canvas con vista top-down**
 
-*The Last Kart* es un juego de carreras desarrollado con tecnología web moderna, featuring multijugador local y controles tanto de teclado como gamepad. Desarrollado por **Mizu Legends Studios**.
+*Mizu Turbo* es un juego de carreras desarrollado con tecnología web moderna, featuring multijugador local y controles tanto de teclado como gamepad. Desarrollado por **Mizu Legends Studios**.
 
 🎮 **[Jugar Ahora](https://mizulegendsstudios.github.io/The_Last_Kart/)**
 
@@ -119,23 +119,7 @@ The_Last_Kart/
 ## 🚀 Instalación y Desarrollo
 
 ### Para jugar:
-Simplemente visita: **https://mizulegendsstudios.github.io/The_Last_Kart/**
-
-### Para desarrollo local:
-```bash
-# Clonar repositorio
-git clone https://github.com/mizulegendsstudios/The_Last_Kart.git
-cd The_Last_Kart
-
-# Servir localmente (Python)
-python -m http.server 8000
-
-# O con Node.js
-npx serve .
-
-# Abrir en navegador
-# http://localhost:8000
-```
+Simplemente visita: **https://mizulegendsstudios.github.io/mizu_turbo/**
 
 ### Estructura de archivos CSS/JS:
 - **CSS**: Enlazado desde GitHub Pages para acceso público
@@ -199,8 +183,8 @@ Ver archivo `LICENSE` para detalles completos.
 
 **Mizu Legends Studios**
 - 🌐 Website: [mizulegendsstudios.github.io](https://mizulegendsstudios.github.io)
-- 🎮 Juego: [The Last Kart](https://mizulegendsstudios.github.io/The_Last_Kart/)
-- 📧 Issues: [GitHub Issues](https://github.com/mizulegendsstudios/The_Last_Kart/issues)
+- 🎮 Juego: [The Last Kart](https://mizulegendsstudios.github.io/mizu_turbo/)
+- 📧 Issues: [GitHub Issues](https://github.com/mizulegendsstudios/mizu_turbo/issues)
 
 ---
 
